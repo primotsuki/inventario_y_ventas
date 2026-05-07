@@ -1,22 +1,23 @@
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using backend_autores.DB;
-using backend_autores.Controllers;
-using backend_autores.Services;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
-
+var Configuration = builder.Configuration;
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<DbContextAutores>(options =>
-options.UseSqlite("Data Source=autores.db"));
-builder.Services.AddScoped<IObraService, ObraService>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services
+    .AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllers();
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<DbContextAutores>();
-    dbContext.Database.EnsureCreated();
-}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -27,10 +28,11 @@ app.UseCors(policy =>
           .AllowAnyMethod()
           .AllowAnyOrigin()
 );
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.UseHttpsRedirection();
-
-
+app.MapIdentityApi<IdentityUser>();
 
 app.Run();
 
