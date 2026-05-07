@@ -1,0 +1,11 @@
+.row-padding {
+    padding-bottom: 15px;
+}
+.form-group-alignment {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+}
+.rs-form-vertical .rs-form-group .rs-input-group {
+    width:150px !important;
+}
