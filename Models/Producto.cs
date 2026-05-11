@@ -18,6 +18,12 @@ namespace backend_autores.Models
         [Column("categoria_id")]
         public int categoriaId { get; set; }
         public Categoria Categoria { get; set; }
+        
+        [Column("proveedor_id")]
+        public int proveedorId {get; set;}
+
+        public Proveedor proveedor;
+
         [Column("var_code")]
         public string VarCode { get; set; }
     }
